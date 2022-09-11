@@ -11,10 +11,12 @@ app.use(
 )
 
 const db = require('./db')
-
+app.get('/', (request, response) => {
+    response.json({ info: 'Test' })
+})
 app.get('/teams', db.getTeams)
 app.post('/teams', db.createTeam)
-app.put('/teams/:name', db.updateTeam)
+app.put('/teams', db.updateTeam)
 app.get('/matches', db.getMatches)
 app.post('/matches', db.createMatch)
 app.delete('/', db.deleteAll)
