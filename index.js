@@ -18,7 +18,7 @@ app.get('/teams', db.getTeams)
 app.post('/teams', db.createTeam)
 app.put('/teams', db.updateTeam)
 app.get('/matches', db.getMatches)
-app.post('/matches', db.createMatch)
+app.post('/matches', db.createMatchWithUpdate)
 app.delete('/', db.deleteAll)
 
 app.listen(port, () => {

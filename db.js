@@ -1,3 +1,4 @@
+const { response } = require('express');
 const e = require('express');
 
 require('dotenv').config();
@@ -85,6 +86,21 @@ const deleteAll = (request, response) => {
     })
 }
 
+const createMatchWithUpdate = (request, response) => {
+    const params = request.body;
+    const team1 = params.team1;
+    const team2 = params.team2;
+    const score1 = parseInt(params.score1);
+    const score2 = parseInt(params.score2);
+    pool.query('CALL insert_match($1, $2, $3, $4)', [team1, team2, score1, score2], (error, results) => {
+        if (error) {
+            handleError(error, response)
+        } else {
+            response.status(200).send(`Added to matches: ${team1} ${team2} ${score1} ${score2}`)
+        }
+    })
+}
+
 const handleError = (error, response) => {
     console.log(error);
     response.status(400).send(error);
@@ -97,6 +113,6 @@ module.exports = {
     createMatch,
     getTeams,
     getMatches,
-    handleError,
-    deleteAll
+    deleteAll,
+    createMatchWithUpdate
 }
