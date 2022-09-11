@@ -13,3 +13,10 @@ CREATE TABLE matches (
     score1 INTEGER NOT NULL CHECK (score1 >= 0),
     score2 INTEGER NOT NULL CHECK (score1 >= 0)
 );
+
+CREATE PROCEDURE delete_all()
+LANGUAGE SQL
+AS $$
+DELETE FROM matches;
+DELETE FROM teams;
+$$;
