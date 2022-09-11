@@ -2,7 +2,8 @@ CREATE TABLE teams (
   name TEXT PRIMARY KEY,
   month INTEGER NOT NULL CHECK (month >= 1 and month <= 12),
   day INTEGER NOT NULL CHECK (day >= 1 and day <= 31),
-  "group" INTEGER NOT NULL
+  "group" INTEGER NOT NULL,
+  score INTEGER NOT NULL CHECK (score >= 0) DEFAULT 0
 );
 
 CREATE TABLE matches (
