@@ -21,14 +21,17 @@ DELETE FROM matches;
 DELETE FROM teams;
 $$;
 
-CREATE PROCEDURE insert_match(IN team1 TEXT, IN team2 TEXT, IN score1 INTEGER, IN score2 INTEGER)
-    LANGUAGE plpgsql
-AS
-$$
+CREATE PROCEDURE insert_match(team1 TEXT, team2 TEXT, score1 INTEGER, score2 INTEGER)
+AS $$
 DECLARE
+    g1 INTEGER := (SELECT "group" FROM teams WHERE name=team1);
+    g2 INTEGER := (SELECT "group" FROM teams WHERE name=team2);
     s1 INTEGER := 3;
     s2 INTEGER := 3;
 BEGIN
+IF g1 != g2 THEN
+    RAISE '% and % are not in the same group.', team1, team2;
+END IF;
 IF score1 > score2 THEN
     s1 = 5;
     s2 = 1;
@@ -36,8 +39,8 @@ ELSIF score1 < score2 THEN
     s1 = 1;
     s2 = 5;
 END IF;
-INSERT INTO matches (team1, team2, score1, score2) VALUES (team1, team2, score1, score2);
 UPDATE teams SET score = score + s1 WHERE name = team1;
 UPDATE teams SET score = score + s2 WHERE name = team2;
+INSERT INTO matches (team1, team2, score1, score2) VALUES (team1, team2, score1, score2);
 END;
-$$;
+$$ LANGUAGE plpgsql;
