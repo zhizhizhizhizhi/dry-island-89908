@@ -21,8 +21,10 @@ DELETE FROM matches;
 DELETE FROM teams;
 $$;
 
-CREATE PROCEDURE insert_match(team1 TEXT, team2 TEXT, score1 INTEGER, score2 INTEGER)
-AS $$
+CREATE PROCEDURE insert_match(IN team1 TEXT, IN team2 TEXT, IN score1 INTEGER, IN score2 INTEGER)
+    LANGUAGE plpgsql
+AS
+$$
 DECLARE
     s1 INTEGER := 3;
     s2 INTEGER := 3;
@@ -34,7 +36,8 @@ ELSIF score1 < score2 THEN
     s1 = 1;
     s2 = 5;
 END IF;
+INSERT INTO matches (team1, team2, score1, score2) VALUES (team1, team2, score1, score2);
 UPDATE teams SET score = score + s1 WHERE name = team1;
 UPDATE teams SET score = score + s2 WHERE name = team2;
 END;
-$$ LANGUAGE plpgsql;
+$$;

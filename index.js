@@ -9,6 +9,8 @@ app.use(
     extended: true,
   })
 )
+app.use(bodyParser.text({ type: 'text/*' }))
+
 
 const db = require('./db')
 app.get('/', (request, response) => {
@@ -16,9 +18,11 @@ app.get('/', (request, response) => {
 })
 app.get('/teams', db.getTeams)
 app.post('/teams', db.createTeam)
+app.post('/teams/batch', db.createTeams)
 app.put('/teams', db.updateTeam)
 app.get('/matches', db.getMatches)
 app.post('/matches', db.createMatchWithUpdate)
+app.post('/matches/batch', db.createMatchesWithUpdate)
 app.delete('/', db.deleteAll)
 
 app.listen(port, () => {
