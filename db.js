@@ -74,7 +74,7 @@ const getTeams = (request, response) => {
             response.status(400).send(error)  
         } else {
             console.log(results.rows)
-            response.status(200).json(results.rows)
+            response.status(200).send(results.rows)
         }
     })
 }
@@ -177,11 +177,11 @@ const createMatchesWithUpdate = async function(request, response) {
                 return response.status(400).send(status.error);
             }
         }
-        console.log("values: ", values);
-        // values = values.filter((match) => Object.keys(match).length != 0);
-        // console.log("values: ", values);
         for (const index in values) {
             const match = values[index];
+            if (Object.keys(match).length) {
+                continue;
+            }
             console.log("before query: ", match);
             const status = new Promise((resolve, reject) => {
                 pool.query('CALL insert_match($1, $2, $3, $4)', 
@@ -198,7 +198,7 @@ const createMatchesWithUpdate = async function(request, response) {
                 return response.status(400).send(status.error);
             }
         }
-        response.status(200).send(`Rows added: ${values.length}`);
+        response.status(200).send(`Matches added`);
     } catch (error) {
         response.status(400).send(error);
     }        
