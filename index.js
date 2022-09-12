@@ -15,12 +15,9 @@ app.use(bodyParser.text({ type: 'text/*' }))
 const db = require('./db')
 
 app.get('/api/teams', db.getTeams)
-app.post('/api/teams', db.createTeam)
-app.post('/api/teams/batch', db.createTeams)
-app.put('/api/teams', db.updateTeam)
+app.post('/api/teams', db.createTeams)
 app.get('/api/matches', db.getMatches)
-app.post('/api/matches', db.createMatchWithUpdate)
-app.post('/api/matches/batch', db.createMatchesWithUpdate)
+app.post('/api/matches', db.createMatchesWithUpdate)
 app.delete('/api/deleteAll', db.deleteAll)
 
 app.listen(port, () => {

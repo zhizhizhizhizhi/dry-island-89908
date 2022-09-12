@@ -171,23 +171,32 @@ const createMatchesWithUpdate = async function(request, response) {
         const values = parser.parseMatches(request.body); 
         for (const index in values) {
             const status = await validateMatch(values[index], {});
+            console.log("status: ", status);
             if (!status.validated) {
                 status.error.cause = index;
                 return response.status(400).send(status.error);
             }
         }
+        console.log("values: ", values);
+        // values = values.filter((match) => Object.keys(match).length != 0);
+        // console.log("values: ", values);
         for (const index in values) {
-            if (response.header) {
-                return;
-            }
             const match = values[index];
-            pool.query('CALL insert_match($1, $2, $3, $4)', 
-            [match.team1, match.team2, match.score1, match.score2], (error, results) => {
-                if (error) {
-                    response.status(400).send(error)
-                    return
-                }
-            });  
+            console.log("before query: ", match);
+            const status = new Promise((resolve, reject) => {
+                pool.query('CALL insert_match($1, $2, $3, $4)', 
+                [match.team1, match.team2, match.score1, match.score2], (error, results) => {
+                    console.log("after query");
+                    if (error) {
+                        resolve({'hasError': true, 'error': error});
+                    } else {
+                        resolve({'hasError': false});
+                    }
+                });
+            });
+            if (status.hasError) {
+                return response.status(400).send(status.error);
+            }
         }
         response.status(200).send(`Rows added: ${values.length}`);
     } catch (error) {
