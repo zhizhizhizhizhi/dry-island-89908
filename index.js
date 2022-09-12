@@ -13,9 +13,7 @@ app.use(bodyParser.text({ type: 'text/*' }))
 
 
 const db = require('./db')
-app.get('/', (request, response) => {
-    response.json({ info: 'Test' })
-})
+
 app.get('/api/teams', db.getTeams)
 app.post('/api/teams', db.createTeam)
 app.post('/api/teams/batch', db.createTeams)
@@ -30,7 +28,7 @@ app.listen(port, () => {
 })
 
 const path = require('path');
-app.use(express.static(path.resolve(__dirname, '../client/build')));
+app.use(express.static(path.resolve(__dirname, 'client/build')));
 app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));
+  res.sendFile(path.resolve(__dirname, 'client/build', 'index.html'));
 });
