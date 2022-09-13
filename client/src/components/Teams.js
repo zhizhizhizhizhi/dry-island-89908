@@ -2,7 +2,7 @@ import React from "react";
 import BaseTable from './Table';
 
 export default function Teams(props) {
-  const headers = ['rank', 'name', 'month', 'day', 'group', 'score'];
+  const headers = ['rank', 'name', 'month', 'day', 'group', 'points', 'goals', 'alt_points'];
 
   const getTeams = (filterOption, teams) => {
     let result = teams;
