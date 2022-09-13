@@ -3,14 +3,24 @@ const e = require('express');
 const parser = require('./parser');
 
 require('dotenv').config();
-const Pool = require('pg').Pool
-const pool = new Pool({
-  user: process.env.user,
-  host: process.env.host,
-  database: process.env.database,
-  password: process.env.password,
-  port: process.env.db_port,
-})
+const Pool = require('pg').Pool;
+const isProduction = process.env.NODE_ENV === "production";
+
+const pool = isProduction ?
+    new Pool({
+        connectionString: isProduction ? process.env.DATABASE_URL : connectionString,
+        ssl: {
+            rejectUnauthorized: false,
+        },
+    })
+    : 
+    new Pool({
+        user: process.env.user,
+        host: process.env.host,
+        database: process.env.database,
+        password: process.env.password,
+        port: process.env.db_port,
+    })
 
 const createTeam = (request, response) => {
     const params = request.body;
