@@ -4,3 +4,4 @@ node_modules
 *.sql
 !schema.sql
 .env
+client/src/components/Dropdown.js

@@ -1,23 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import BaseTable from './Table';
-import {getTeams} from '../data/data.js';
 
 export default function Teams(props) {
-  const [teams, setTeams] = useState([]);
-  const headers = ['name', 'month', 'day', 'group', 'score'];
+  const headers = ['rank', 'name', 'month', 'day', 'group', 'score'];
 
-  const getTeamsAsArray = async function() {
-    let teams = await getTeams()
-    teams = teams.filter((team) => {return props.filterOption(team);})
-    setTeams(teams);
-  }
-  useEffect(() => {
-    if (teams.length == 0) {
-        getTeamsAsArray();
+  const getTeams = (filterOption, teams) => {
+    let result = teams;
+    if (filterOption) {
+        result = result.filter((team) => {return props.filterOption(team);});
     }
-  });
+    result = result.map((team, index) => {team.rank = index + 1; return team;});
+    return result;
+  }
 
   return (
-    <BaseTable headers={headers} rows={teams}/>
+    <BaseTable headers={headers} rows={getTeams(props.filterOption, props.teams)}/>
   );
 }

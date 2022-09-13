@@ -29,24 +29,25 @@ const createTeam = (request, response) => {
 }
 
 const createTeams = (request, response) => {
+    let values = [];
     try {
-        console.log(request);
-        console.log("body: ", request.body);
-        const values = parser.parseTeams(request.body); 
-        if (values.length == 0) {
-            return response.status(200).send(`Nothing to add`);
-        }
-        let sqlRows = values.map(row => `('${row.name}','${row.month}','${row.day}','${row.group}') `);
-        pool.query(`INSERT INTO teams (name, month, day, "group") VALUES ${sqlRows} RETURNING *`, (error, results) => {
-            if (error) {
-                response.status(400).send(error)
-            } else {
-                response.status(200).send(`${results.rowCount} teams added`)
-            }
-        })
+        values = parser.parseTeams(request.body); 
     } catch (error) {
-        response.status(400).send(error);
-    }        
+        console.log("parser error: ", error);
+        response.status(400).send({message: "cannot parse ", cause: error.cause});
+        return;
+    }  
+    if (values.length == 0) {
+        return response.status(200).send(`Nothing to add`);
+    }
+    let sqlRows = values.map(row => `('${row.name}','${row.month}','${row.day}','${row.group}') `);
+    pool.query(`INSERT INTO teams (name, month, day, "group") VALUES ${sqlRows} RETURNING *`, (error, results) => {
+        if (error) {
+            response.status(400).send(error)
+        } else {
+            response.status(200).send(`Added to teams`)
+        }
+    })       
 }
 
 const updateTeam = (request, response) => {
@@ -69,7 +70,7 @@ const updateTeam = (request, response) => {
 }
 
 const getTeams = (request, response) => {
-    pool.query('SELECT * FROM teams', (error, results) => {
+    pool.query('SELECT * FROM teams ORDER BY score DESC, month ASC, day ASC', (error, results) => {
         if (error) {
             response.status(400).send(error)  
         } else {
@@ -96,7 +97,6 @@ const validateMatch = (match, status) => {
             if (results.rows.length == 2) {
                 status.validated = true
             } else if (results.rows.length == 0) {
-                console.log("correct branch")
                 status.error.message = `${match.team1} and ${match.team2} cannot be found in records`
                 status.validated = false
             } else if (results.rows.length == 1) {
@@ -167,6 +167,11 @@ const createMatchWithUpdate = (request, response) => {
 
 const createMatchesWithUpdate = async function(request, response) {
     try {
+        parser.parseMatches(request.body); 
+    } catch (error) {
+        return response.status(400).send(error);
+    }
+    try {
         console.log(request.body);
         const values = parser.parseMatches(request.body); 
         for (const index in values) {
@@ -177,11 +182,11 @@ const createMatchesWithUpdate = async function(request, response) {
                 return response.status(400).send(status.error);
             }
         }
+        console.log("values: ", values);
+        // values = values.filter((match) => Object.keys(match).length != 0);
+        // console.log("values: ", values);
         for (const index in values) {
             const match = values[index];
-            if (Object.keys(match).length) {
-                continue;
-            }
             console.log("before query: ", match);
             const status = new Promise((resolve, reject) => {
                 pool.query('CALL insert_match($1, $2, $3, $4)', 
@@ -198,10 +203,10 @@ const createMatchesWithUpdate = async function(request, response) {
                 return response.status(400).send(status.error);
             }
         }
-        response.status(200).send(`Matches added`);
+        response.status(200).send(`Rows added: ${values.length}`);
     } catch (error) {
         response.status(400).send(error);
-    }        
+    }         
 }
 
 module.exports = {
