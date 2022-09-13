@@ -8,7 +8,7 @@ const isProduction = process.env.NODE_ENV === "production";
 
 const pool = isProduction ?
     new Pool({
-        connectionString: isProduction ? process.env.DATABASE_URL : connectionString,
+        connectionString: process.env.DATABASE_URL,
         ssl: {
             rejectUnauthorized: false,
         },
