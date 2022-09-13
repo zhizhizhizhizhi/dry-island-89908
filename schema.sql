@@ -15,8 +15,9 @@ CREATE TABLE matches (
 );
 
 CREATE PROCEDURE delete_all()
-LANGUAGE ‘plpgsql’
-AS $$
+    LANGUAGE sql
+AS
+$$
 DELETE FROM matches;
 DELETE FROM teams;
 $$;
