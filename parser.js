@@ -16,19 +16,19 @@ const parseTeams = (text) => {
             throw Error(`Could not parse line ${index}`, 
             {cause: {line: lines[index], 
                 index: index, 
-                message: `Could not parse '${lines[index]}' on line ${index}`}});        }
+                message: `Could not parse '${lines[index]}' in line ${index}`}});        }
         if (parseInt(matches.groups.day) <= 0 || parseInt(matches.groups.day) > 31 
             || parseInt(matches.groups.month) <= 0 || parseInt(matches.groups.month) > 12) {
                 throw Error(`Could not parse line ${index}`, 
                 {cause: {line: lines[index], 
                     index: index, 
-                    message: `Could not parse '${lines[index]}' on line ${index}:\nInvalid DD/MM`}});
+                    message: `Could not parse '${lines[index]}' in line ${index}:\nInvalid DD/MM`}});
         }
         if (parseInt(matches.groups.group) <= 0 || parseInt(matches.groups.group) > 2) {
             throw Error(`Could not parse line ${index}`, 
                 {cause: {line: lines[index], 
                     index: index, 
-                    message: `Could not parse '${lines[index]}' on line ${index}:\nOnly group numbers 1 and 2 are allowed`}});
+                    message: `Could not parse '${lines[index]}' in line ${index}:\nOnly group numbers 1 and 2 are allowed`}});
         }
         res.push({
             "name": matches.groups.name, 
@@ -54,13 +54,13 @@ const parseMatches = (text) => {
             throw Error(`Could not parse line ${index}`, 
             {cause: {line: lines[index], 
                 index: index, 
-                message: `Could not parse '${lines[index]}' on line ${index}`}});
+                message: `Could not parse '${lines[index]}' in line ${index}`}});
         }
         if (matches.groups.team1 == matches.groups.team2) {
             throw Error(`The two teams in the match should be different`, 
             {cause: {line: lines[index], 
                 index: index,
-                message: `Could not parse '${lines[index]}' on line ${index}:\nThe two teams in the match should be different`}});
+                message: `Could not parse '${lines[index]}' in line ${index}:\nThe two teams in the match should be different`}});
         }
         res.push({
             "team1": matches.groups.team1, 
