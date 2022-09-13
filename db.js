@@ -169,7 +169,8 @@ const createMatchesWithUpdate = async function(request, response) {
     try {
         parser.parseMatches(request.body); 
     } catch (error) {
-        return response.status(400).send(error);
+        console.log("parse matches: ", error);
+        return response.status(400).send({message: "cannot parse ", cause: error.cause});
     }
     try {
         console.log(request.body);

@@ -3,15 +3,15 @@ import Teams from './Teams';
 import Matches from './Matches';
 import {getTeams, getMatches, postTeams, postMatches, deleteAll, processResult} from '../data/data.js';
 import Box, { BoxProps } from '@mui/material/Box';
-import { Container, maxWidth } from "@mui/system";
+import { Container } from "@mui/system";
 import Button from '@mui/material/Button';
 import ButtonStack from "./ButtonStack";
 import InputField from "./InputField";
-import { Card, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
+import BaseTable from "./Table";
 
 function Page() {
     const [teams, setTeams] = useState([]);
-    const [qualifiers, setQualifiers] = useState([]);
     const [matches, setMatches] = useState([]);
     const [shouldUpdate, setShouldUpdate] = useState(true);
     const [input, setInput] = useState('');
@@ -47,12 +47,27 @@ function Page() {
         handleInputChange('');
         setResponse('');
     }
-    console.log("after submit: ", input);
+    const showTopTeams = () => {
+        const team1 = teams.filter((team) => {return team.group == 1;});
+        const fromTeam1 = [];
+        let response = '';
+        for (let i = 0; i < 4 && i < team1.length; i++) {
+            response += team1[i].name + '(Group 1) ';
+        }
+        const team2 = teams.filter((team) => {return team.group == 2;});
+        const fromTeam2 = [];
+        response += '\n'
+        for (let i = 0; i < 4 && i < team2.length; i++) {
+            response += team2[i].name + '(Group 2) ';
+        }
+        setResponse({status: 200, message: response});
+    }
+    // console.log("after submit: ", input);
     const buttons = [
         <Button color="success" key={0} onClick={() => submitTeams(input)}>Submit teams</Button>,
         <Button color="success" key={1} onClick={() => submitMatches(input)}>Submit matches</Button>,
         <Button key={2} onClick={clearInput}>Clear input</Button>,
-        <Button key={3}>Show qualifying teams</Button>,
+        <Button key={3} onClick={showTopTeams}>Show qualifying teams</Button>,
         <Button color="error" key={4} onClick={handleDelete}>Delete all</Button>,
     ];
     
@@ -63,6 +78,7 @@ function Page() {
         }
         setShouldUpdate(false);
     });
+    console.log("response in page: ", response);
     return (
         <div class="p-5">
             <Box sx={{
@@ -81,7 +97,15 @@ function Page() {
                     <InputField sx={{ width: '75%' }} value={input} onChange={handleInputChange}/>
                     <Box class="d-flex flex-col" sx={{ width: '25%' }}>
                         <ButtonStack buttons={buttons}/>
-                        <Grid item sx={{m: '5%', width: '13rem', textOverflow: 'clip'}}>{response ? response.message : ''}</Grid>
+                        <Grid item sx={{m: '5%', width: '13rem', textOverflow: 'clip'}}> 
+                        {
+                            response ? 
+                            <p style={(response.status == 200) ? {color: '#4CAF50'} : {color: '#E97451'}}>
+                                {response.status == 200 ? response.message : 'Error: ' + response.message}
+                            </p>
+                            : <p/>
+                        }
+                        </Grid>
                     </Box>
                 </Box>
                 <Box sx={{

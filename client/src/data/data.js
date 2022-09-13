@@ -93,7 +93,7 @@ async function postPlainTextPromise(url = '', data = '') {
     if (!obj || typeof obj === 'string' || !obj.status) {
       return {status: 400, message: 'no response: ' + (typeof obj === 'string' && obj)};
     } 
-    if (obj.status && obj.content && typeof content === 'string') {
+    if (obj.status && obj.status == 200) {
       return {status: obj.status, message: obj.content};
     }
     if (obj.status && obj.status == 400) {
@@ -102,6 +102,8 @@ async function postPlainTextPromise(url = '', data = '') {
         msg = obj.content.detail;
       } else if (obj.content && obj.content.cause && obj.content.cause.message) {
         msg = obj.content.cause.message;
+      } else if (obj.content && obj.content.message) {
+        msg = obj.content.message;
       }
       return {status: obj.status, message: msg};
     }
