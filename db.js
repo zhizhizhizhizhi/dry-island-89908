@@ -194,8 +194,6 @@ const createMatchesWithUpdate = async function(request, response) {
             }
         }
         console.log("values: ", values);
-        // values = values.filter((match) => Object.keys(match).length != 0);
-        // console.log("values: ", values);
         for (const index in values) {
             const match = values[index];
             console.log("before query: ", match);
@@ -214,7 +212,8 @@ const createMatchesWithUpdate = async function(request, response) {
                 return response.status(400).send(status.error);
             }
         }
-        response.status(200).send(`Rows added: ${values.length}`);
+        const actualRowCount = values.filter((match) => Object.keys(match).length != 0).length;
+        response.status(200).send(`Rows added: ${actualRowCount}`);
     } catch (error) {
         response.status(400).send(error);
     }         
